@@ -1,0 +1,4 @@
+interface HiddenLayer {
+  void input(dec weights[])
+  dec[] output()
+}

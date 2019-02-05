@@ -1,0 +1,20 @@
+component provides App requires NeuralNet{
+  int App:main(AppParam param[]) {
+		/* IDC neuralnet = loader.load("NeuralNet.o")
+		IDC hiddenlayerA = loader.load("HiddenLayerA.o")
+		IDC hiddenlayerB = loader.load("HiddenLayerB.o")
+
+		dana.rewire(neuralnet :> "Layer",
+			hiddenlayerA :< "Layer")
+
+		NeuralNet obj = new NeuralNet() from neuralnet
+		obj.run()
+
+		adapter.adaptRequiredInterface(neuralnet,
+			"Layer", hiddenlayerB)
+		obj.run() */
+		NeuralNet obj = new NeuralNet()
+		obj.run()
+		return 0
+	}
+}

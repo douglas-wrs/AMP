@@ -1,0 +1,11 @@
+component provides OutputLayer requires io.Output out{
+  void OutputLayer:input(dec weights[])
+  {
+    /* out.println("Output Layer B Input") */
+  }
+  dec[] OutputLayer:output()
+  {
+    /* out.println("Output Layer B Output") */
+    return  null
+  }
+}

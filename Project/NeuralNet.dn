@@ -1,0 +1,16 @@
+component provides NeuralNet requires InputLayer inputlayer,
+HiddenLayer hiddenlayer, OutputLayer outputlayer {
+	void NeuralNet:run() {
+		dec weights[]
+		while(true){
+			inputlayer.input(weights)
+			inputlayer.output()
+
+			hiddenlayer.input(weights)
+			hiddenlayer.output()
+
+			outputlayer.input(weights)
+			outputlayer.output()
+		}
+	}
+}

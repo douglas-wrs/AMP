@@ -1,0 +1,11 @@
+component provides HiddenLayer requires io.Output out{
+  void HiddenLayer:input(dec weights[])
+  {
+    /* out.println("Hidden Layer A Input") */
+  }
+  dec[] HiddenLayer:output()
+  {
+    /* out.println("Hidden Layer A Output") */
+    return  null
+  }
+}

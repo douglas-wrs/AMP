@@ -1,0 +1,4 @@
+interface InputLayer {
+  void input(dec weights[])
+  dec[] output()
+}
