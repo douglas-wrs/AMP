@@ -3,7 +3,7 @@ uses monitoring.BeingMonitored
 interface Container {
 	Event[] getEvents()
 	Metric[] getMetrics()
-	void addMetric(char name[], int value, bool high)
+	void addMetric(char name[], dec value, bool high, bool avg)
 	void addEvent(char type[], int quantifier)
 	void turnMonitorOn()
 	void turnMonitorOff()

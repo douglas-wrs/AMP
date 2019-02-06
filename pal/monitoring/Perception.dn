@@ -29,7 +29,7 @@ const bool PROXY = true
 
 // TODO: revisit the variable's name -- it's getting confusing...
 component provides monitoring.Perception requires io.Output out, data.IntUtil iu, composition.Assembly assembly, composition.ObjectWriter,
-	data.StringUtil strUtil, util.DescriptionHandler dh {
+	data.StringUtil strUtil, util.DescriptionHandler dh, data.DecUtil du {
 
 	Rule rule // active proxy rule -- one proxy rule at a time (for now and for simplicity -- maybe that's the right move here)
 	String cleanConfigs[] // configs with no proxies
@@ -237,7 +237,7 @@ component provides monitoring.Perception requires io.Output out, data.IntUtil iu
 									"\"name\": \"$(metrics[i].name)\"",
 									", \"config\": \"", currentConfig, "\"",
 									", \"source\": \"", componentName, "\"",
-									", \"value\":", iu.intToString(metrics[i].value),
+									", \"value\":", du.decToString(metrics[i].value),
 									", \"count\":", iu.intToString(metrics[i].counter),
 									", \"preferHigh\":", preferHigh,
 									", \"startTime\": \"",

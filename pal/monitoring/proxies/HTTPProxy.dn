@@ -49,7 +49,7 @@ component provides http.handler.GET.HTTPGET, monitoring.BeingMonitored requires 
 			//TODO... metric and event collection
 
 
-			monitor.addMetric("metric_example", 1, false)
+			monitor.addMetric("metric_example", 1, false, true)
 			monitor.addEvent("event_example", 1)
 		}
 	}
