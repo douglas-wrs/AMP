@@ -16,7 +16,7 @@ Compile and Run pal
 
 dnc . -sp "../repository;../Project"
 
-dana -sp ../Project InteractiveAssembly.o ../Project/NeuralNet.o
+dana -sp ../Project InteractiveAssembly.o ../neuralnet/NeuralNetDemo1.o
 
 Add Proxy
 
