@@ -10,7 +10,7 @@ data Event {
 
 data Metric {
 	char name[]
-	int value
+	dec value
 	bool high// true means the higher the value the better
 	int counter
 	DateTime started

@@ -7,7 +7,8 @@
 
 const char debugMSG[] = "[@ResponseTime]"
 
-component provides Container requires io.Output out, data.IntUtil iu, data.adt.HashTable, time.Calendar ic {
+component provides Container requires io.Output out, data.IntUtil iu, data.adt.HashTable,
+	time.Calendar ic, data.DecUtil du {
 	bool collect
 	HashTable metrics
 	HashTable events
@@ -43,7 +44,7 @@ component provides Container requires io.Output out, data.IntUtil iu, data.adt.H
 		}
 	}
 
-	void Container:addMetric(char name[], int value, bool high) {
+	void Container:addMetric(char name[], dec value, bool high, bool avg) {
 		mutex(collectLock) {
 			if (collect) {
 				mutex (metricsLock) {
@@ -58,20 +59,13 @@ component provides Container requires io.Output out, data.IntUtil iu, data.adt.H
 					Metric m = metrics.get(newMetric.name)
 					if (m == null) { metrics.put(newMetric.name, newMetric) }
 					else {
-						int newValue
-						/*
-						if ((((m.value/m.counter)*4) < (newMetric.value)) || 
-							(((m.value/m.counter)/4) > (newMetric.value))) {
-							newValue = m.value
-						} else {
+						if (avg) {
+							dec newValue
 							newValue = m.value + newMetric.value
-							if (newValue < m.value) { newValue = INT_MAX }	
-						}*/
-						newValue = m.value + newMetric.value
-						if (newValue < m.value) { newValue = INT_MAX }
-						newMetric.value 	= newValue
-						newMetric.counter 	= m.counter + newMetric.counter
-						newMetric.started 	= m.started
+							newMetric.value 	= newValue
+							newMetric.counter 	= m.counter + newMetric.counter
+							newMetric.started 	= m.started	
+						}
 						metrics.update(newMetric.name, newMetric)
 					}
 				}
