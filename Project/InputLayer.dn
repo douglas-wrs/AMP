@@ -1,11 +1,90 @@
-component provides InputLayer requires io.Output out{
-  void InputLayer:input(dec weights[])
+component provides InputLayer requires io.Output out, data.DecUtil decUtil, data.IntUtil intUtil, data.StringUtil strUtil{
+
+  int maxNeurons = 10
+  int numNeurons = 2
+  int numColumns = 10
+  int numRows = 10
+  int numWeights = 100
+
+  dec[] InputLayer:fowardPropagation(dec values[])
   {
-    /* out.println("Input Layer Input") */
+    dec inputValues[] = convertInput(values)
+    return inputValues
   }
-  dec[] InputLayer:output()
-  {
-    /* out.println("Input Layer Output") */
-    return  null
+
+  int getNumNeurons(dec inputValues[]){
+    int count = 0
+    for (int i=0; i < numColumns; i++){
+      for (int j=0; j < numColumns; j++){
+        int index = i*numColumns+j
+        if (inputValues[index] != 0)
+          count = count+1
+      }
+    }
+    return count
+  }
+  dec[] convertWeights(char string[]){
+    dec weights[100]
+    String array[] = strUtil.explode(string, "\t")
+    for (int i = 0; i < array.arrayLength; i++){
+       weights[i] = decUtil.decFromString(array[i].string)
+    }
+    return weights
+  }
+  dec[] adaptWeights(dec weights[], int pNeurons, int cNeurons){
+    for (int i=0; i < numColumns; i++){
+      for (int j=0; j < numColumns; j++){
+        int index = i*numColumns+j
+        if (i>=pNeurons)
+          weights[index] = 0
+        if (j>=cNeurons)
+          weights[index] = 0
+      }
+    }
+    return weights
+  }
+  void printWeights(dec weights[]){
+    for (int i=0; i < numColumns; i++){
+      for (int j=0; j < numColumns; j++){
+        int index = i*numColumns+j
+        out.print("$(decUtil.decToString(weights[index])) ")
+      }
+      out.print("\n")
+    }
+  }
+  void printNeurons(dec values[]){
+    for (int i=0; i < values.arrayLength; i++){
+      out.print("$(decUtil.decToString(values[i])) ")
+    }
+  }
+  dec[] convertInput(dec values[]){
+    dec newInput[100]
+    for (int i =0; i < numNeurons; i++){
+      newInput[i] = values[i]
+    }
+    for (int i =numNeurons; i < maxNeurons; i++){
+      newInput[i] = 0
+    }
+    return newInput
+  }
+  dec[] activation(dec inputValues[], dec layerWeights[]){
+    dec sum = 0.0
+    dec multiply[100]
+    // rows of first matrix
+    for (int c = 0; c < numColumns; c++) {
+      // columns of second matrix
+     for (int d = 0; d < numColumns; d++) {
+       //  rows of second matrix
+       for (int k = 0; k < numColumns; k++) {
+         int indexFirst = c*numColumns+k
+         int indexSecond = k*numColumns+d
+         sum = sum + inputValues[indexFirst]*layerWeights[indexSecond]
+       }
+       int indexThird = c*numColumns+d
+       multiply[indexThird] = sum
+       sum = 0
+     }
+   }
+   return multiply
   }
 }

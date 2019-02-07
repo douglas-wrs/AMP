@@ -1,4 +1,3 @@
 interface InputLayer {
-  void input(dec weights[])
-  dec[] output()
+  dec[] fowardPropagation(dec input[])
 }

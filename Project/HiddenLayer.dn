@@ -1,7 +1,7 @@
 component provides HiddenLayer requires io.Output out, data.DecUtil decUtil, data.IntUtil intUtil, data.StringUtil strUtil{
 
   int maxNeurons = 10
-  int numNeurons = 3
+  int numNeurons = 5
   int numColumns = 10
   int numWeights = 100
 
