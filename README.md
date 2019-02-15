@@ -9,7 +9,7 @@ Consequently, the main objective is answer two questions:
 	What would the impact in the overall accuracy?
 
 The experiments are based on two datasets:  
-  
+
 	Iris Flowers
 	Minist Digits
 
