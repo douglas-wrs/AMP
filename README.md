@@ -7,7 +7,7 @@ happen with the ANN training time and its convergence ? and What would the impac
 
 The task that the emergent multilayer perceptron will tackle is the classify iris dataset with 2 features (petal length and petal width) and output one of the three flower classes ('Setosa', 'Versicolor', 'Virginica').
 
-![EMLP Architecture](./Emergent_MLP.png)
+![EMLP Architecture](./adaptive_mlp.png)
 
 Compile Project
 
