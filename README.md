@@ -6,10 +6,10 @@ Artificial Neural Networks (ANN) are computing systems inspired by the biologica
 Consequently, the main objective is answer two questions:  
 
 	What will happen with the ANN training time and its convergence?  
-	What would the impact in the overall accuracy?
+	What would be the impact in the overall accuracy?
 
 The experiments are based on two datasets:  
-  
+
 	Iris Flowers
 	Minist Digits
 
