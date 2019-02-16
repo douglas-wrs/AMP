@@ -1,0 +1,12 @@
+component provides function.Activation1 requires io.Output out, layer.Output op {
+
+    char num_neurons = "2"
+
+    dec[] Activation1:activate(){
+        out.println("Activation Hidden Layer 1")
+        op.foward()
+        out.println("Pass Backprogagation to Hidden Layer 1")
+        return null
+
+    }
+}

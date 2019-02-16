@@ -1,0 +1,3 @@
+interface Activation2 {
+  dec[] activate()
+}

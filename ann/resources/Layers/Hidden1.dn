@@ -1,4 +1,0 @@
-interface HiddenLayer {
-  dec[] fowardPropagation(dec input[], dec weights[])
-  dec[] backPropagation(dec alpha, dec delta, dec h[], dec previousWeights[])
-}

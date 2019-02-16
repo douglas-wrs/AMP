@@ -1,4 +1,0 @@
-interface OutputLayer {
-  dec[] fowardPropagation(dec input[], dec weights[])
-  dec[] backPropagation(dec alpha, dec delta[], dec h[])
-}

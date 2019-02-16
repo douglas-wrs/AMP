@@ -1,3 +1,0 @@
-interface InputLayer {
-  dec[] fowardPropagation(dec input[])
-}

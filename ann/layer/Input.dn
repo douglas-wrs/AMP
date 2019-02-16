@@ -1,0 +1,11 @@
+component provides layer.Input requires io.Output out, layer.Hidden1 h1 {
+
+    char num_neurons = "4"
+
+    dec[] Input:foward(){
+        out.println("In Input Layer")
+        h1.foward()
+        return null
+
+    }
+}

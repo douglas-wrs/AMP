@@ -1,0 +1,12 @@
+component provides layer.Hidden1 requires io.Output out, function.Activation1 act1 {
+
+    char num_neurons = "2"
+
+    dec[] Hidden1:foward(){
+        out.println("In Hidden Layer 1")
+        act1.activate()
+        out.println("Update Weights of Hidden Layer 1")
+        return null
+
+    }
+}

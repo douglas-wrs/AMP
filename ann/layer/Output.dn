@@ -1,0 +1,15 @@
+component provides Output requires io.Output out {
+
+    int num_neurons = "3"
+
+    dec[] Output:foward(){
+        out.println("In Output Layer")
+        out.println("End of Fowardpropagation\n")
+
+        out.println("Begin Backprogagation")
+        out.println("Update Weights Output Layer")
+
+        return null
+
+    }
+}
