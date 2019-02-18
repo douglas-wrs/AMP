@@ -1,0 +1,145 @@
+const int MAX_NEURONS = 16
+
+component provides layer.Hidden1 requires io.Output out, function.Activation1 act1,
+data.DecUtil decUtil, data.IntUtil intUtil, data.StringUtil strUtil {
+
+    int num_neurons = 4
+    dec mask[] = new dec[](1.0,1.0,1.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0)
+
+    transfer dec weights[] = new dec[](0.4, 0.6, 0.8, 0.7, 0.8, 0.8, 0.2, 0.7, 0.3, 0.7, 0.1, 0.2, 0.4, 0.7, 0.8, 0.4, 0.7, 0.5, 0.3, 0.7, 0.4, 0.3, 0.8, 0.3, 0.6, 0.4, 0.6, 0.2, 0.8, 0.9, 0.6, 0.6, 0.4, 0.4, 0.8, 0.2, 0.5, 0.8, 0.2, 0.3, 0.9, 0.4, 0.7, 0.8, 0.5, 0.7, 0.9, 0.8, 0.3, 0.2, 0.8, 0.8, 0.5, 0.6, 0.5, 0.7, 0.3, 0.1, 0.5, 0.5, 0.5, 0.2, 0.3, 0.1, 0.9, 0.5, 0.8, 0.2, 0.2, 0.4, 0.5, 0.3, 0.8, 0.7, 0.2, 0.6, 0.8, 0.3, 0.5, 0.6, 0.4, 0.5, 0.8, 0.3, 0.2, 0.5, 0.8, 0.3, 0.4, 0.7, 0.4, 0.5, 0.5, 0.4, 0.5, 0.7, 0.3, 0.7, 0.2, 0.1, 0.7, 0.7, 0.8, 0.8, 0.1, 0.8, 0.4, 0.9, 0.2, 0.6, 0.8, 0.3, 0.7, 0.2, 0.6, 0.8, 0.9, 0.3, 0.7, 0.3, 0.4, 0.8, 0.7, 0.7, 0.4, 0.8, 0.7, 0.8, 0.5, 0.1, 0.6, 0.4, 0.3, 0.5, 0.6, 0.5, 0.5, 0.7, 0.5, 0.8, 0.6, 0.2, 0.2, 0.9, 0.3, 0.8, 0.2, 0.3, 0.9, 0.5, 0.5, 0.2, 0.8, 0.7, 0.2, 0.8, 0.5, 0.2, 0.6, 0.3, 0.1, 0.8, 0.5, 0.3, 0.7, 0.8, 0.6, 0.6, 0.2, 0.6, 0.4, 0.5, 0.1, 0.4, 0.3, 0.8, 0.2, 0.5, 0.8, 0.4, 0.4, 0.8, 0.2, 0.4, 0.7, 0.1, 0.4, 0.5, 0.6, 0.5, 0.7, 0.9, 0.5, 0.2, 0.2, 0.1, 0.9, 0.7, 0.2, 0.6, 0.9, 0.7, 0.6, 0.6, 0.9, 0.5, 0.3, 0.2, 0.6, 0.1, 0.8, 0.2, 0.7, 0.8, 0.4, 0.7, 0.8, 0.7, 0.3, 0.7, 0.7, 0.4, 0.4, 0.3, 0.7, 0.3, 0.5, 0.6, 0.5, 0.5, 0.1, 0.4, 0.8, 0.7, 0.8, 0.5, 0.8, 0.6, 0.1, 0.2, 0.7, 0.2, 0.1, 0.2, 0.1, 0.4, 0.3, 0.2, 0.8, 0.8, 0.1, 0.8, 0.8, 0.2, 0.4, 0.5)
+
+    transfer dec bias[] =  new dec[](1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0)
+
+    dec[] Hidden1:foward(dec previous_array[], dec previous_mask[]){
+        out.println("-----HIDDEN LAYER 1-----")
+        int previous_num_neurons = get_number_neurons(previous_mask)
+
+        out.println("Input")
+        dec real_input[] = filter_array(previous_array,previous_mask,previous_num_neurons)
+        print_array(real_input)
+
+        dec previous_mask_matrix[] = create_matrix_mask(previous_mask, MAX_NEURONS)
+        dec previous_mask_matrix_t[] = transpose_matrix(previous_mask_matrix, MAX_NEURONS)
+        dec mask_matrix[] = create_matrix_mask(mask, MAX_NEURONS)
+        dec weights_mask[] = logical_and_array(previous_mask_matrix_t,mask_matrix, MAX_NEURONS)
+
+        out.println("Real weights matrix")
+        dec real_weights[] = filter_matrix (weights, weights_mask, previous_num_neurons, num_neurons)
+        print_matrix(real_weights, previous_num_neurons, num_neurons)
+
+        out.println("Real bias")
+        dec real_bias[] = filter_array(bias,mask,num_neurons)
+        print_array(real_bias)
+
+        out.println("Output neurons values")
+
+        dec output_weights[] = array_multi_matrix(real_input, real_weights, previous_num_neurons, num_neurons)
+        print_array(output_weights)
+        out.println("Output neurons values + bias")
+        dec output_bias[] = array_plus_array(output_weights,real_bias)
+        print_array(output_bias)
+
+        act1.activate(output_bias, mask)
+        out.println("#")
+        return null
+    }
+    int get_number_neurons(dec array[]){
+        int count = 0
+        for (int i=0; i < array.arrayLength; i++){
+            if (array[i] == 1.0)
+                count++
+        }
+        return count
+    }
+    void print_array(dec array[]){
+        for (int i=0; i < array.arrayLength; i++){
+            out.print("$(decUtil.decToString(array[i])) ")
+        }
+        out.println(" ")
+    }
+    void print_matrix(dec matrix[], int num_rows, int num_columns){
+        for (int i=0; i < num_rows; i++){
+            for (int j=0; j < num_columns; j++){
+                int index = i*num_columns+j
+                out.print("$(decUtil.decToString(matrix[index])) ")
+            }
+            out.print("\n")
+        }
+    }
+    dec[] create_matrix_mask(dec array[], int num_columns){
+        dec mask_matrix[] = new dec[num_columns*num_columns]
+        for (int i=0; i < num_columns; i++){
+            for (int j=0; j < num_columns; j++){
+                int index = i*num_columns+j
+                mask_matrix[index] = array[j]
+            }
+        }
+        return mask_matrix
+    }
+    dec[] transpose_matrix (dec matrix[], int num_columns){
+        dec transpose_matrix[] = new dec[num_columns*num_columns]
+        for (int c = 0; c < num_columns; c++) {
+            for (int d = 0; d < num_columns; d++){
+                int index = c*num_columns+d
+                int index_transpose = d*num_columns+c
+                transpose_matrix[index_transpose] = matrix[index]
+            }
+        }
+        return transpose_matrix
+    }
+    dec[] logical_and_array (dec array_1[], dec array_2[], int num_columns){
+        dec and_array[] = new dec[num_columns*num_columns]
+        for (int i=0; i < array_1.arrayLength; i++){
+            if (array_1[i] == array_2[i] && array_1[i] == 1.0)
+                and_array[i] = 1.0
+            else
+                and_array[i] = 0.0
+        }
+        return and_array
+    }
+    dec[] filter_matrix (dec w_array[], dec w_mask[], int previous_num_neurons, int l_num_neurons){
+        dec real_weights[] = new dec[previous_num_neurons*l_num_neurons]
+        int c = 0
+        for (int i = 0; i < w_array.arrayLength; i++) {
+                if (w_mask[i] == 1.0){
+                    real_weights[c] = w_array[i]
+                    c++
+                }
+        }
+        return real_weights
+    }
+    dec[] filter_array (dec i_array[], dec i_mask[], int number_neurons){
+        dec new_array[] = new dec[number_neurons]
+        int c = 0
+        for (int i = 0; i < i_array.arrayLength; i++) {
+                if (i_mask[i] == 1.0){
+                    new_array[c] = i_array[i]
+                    c++
+                }
+        }
+        return new_array
+    }
+    dec[] array_multi_matrix(dec i_array[], dec i_matrix[], int number_rows, int number_columns){
+        dec sum = 0.0
+        dec multiply[] = new dec[number_columns]
+        for (int c = 0; c < number_columns; c++) {
+            int k = 0
+            for (int d = 0; d < number_rows; d++) {
+                int index = d*number_columns+c
+                sum = sum + i_array[k]*i_matrix[index]
+                k++
+            }
+                multiply[c] = sum
+                sum = 0
+        }
+        return multiply
+    }
+    dec[] array_plus_array(dec a_array[], dec b_array[]){
+        dec sum_array[] = new dec[a_array.arrayLength]
+
+        for (int c = 0; c < a_array.arrayLength; c++) {
+            sum_array[c] = a_array[c] + b_array[c]
+        }
+        return sum_array
+    }
+}

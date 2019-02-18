@@ -1,19 +1,23 @@
-component provides App requires io.Output out, layer.Input in, ui.Window, ui.Button, ui.Label, Font, data.IntUtil iu, data.StringUtil strUtil{
-    Window window
-    Label display
-    Thread main
-    char currentDisplay[] 	= ""
+component provides App requires io.Output out, layer.Input in,
+data.DecUtil decUtil, data.IntUtil intUtil, data.StringUtil strUtil{
+
+    dec data_row[] = new dec[](0.1, 0.2, 0.7)
 
     int App:main(AppParam param[]) {
-        window = new Window("Learning Log")
-        window.setSize(220, 150)
-		window.setVisible(true)
-        display = new Label(currentDisplay, "LiberationMono.ttf", 18)
-		display.setColor(new Color(0, 0, 0, 255))
-        
-        out.println("Hajime Foward Propagation\n")
-        in.foward()
+        out.println("")
+        out.println("Begin Epoch")
+        in.foward(data_row)
         out.println("End of Epoch")
         return 0
+    }
+
+    void print_array(dec array[]){
+        for (int i=0; i < array.arrayLength; i++){
+            out.print("$(decUtil.decToString(array[i])) ")
+        }
+        out.println(" ")
+    }
+    void print_matrix(dec matrix[], int max_neurons){
+
     }
 }

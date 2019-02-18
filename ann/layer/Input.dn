@@ -1,11 +1,36 @@
-component provides layer.Input requires io.Output out, layer.Hidden1 h1 {
+const int MAX_NEURONS = 16
 
-    char num_neurons = "4"
+component provides layer.Input requires io.Output out, layer.Hidden1 h1,
+data.DecUtil decUtil, data.IntUtil intUtil, data.StringUtil strUtil {
 
-    dec[] Input:foward(){
-        out.println("In Input Layer")
-        h1.foward()
+    int num_neurons = 3
+    dec mask[] = new dec[](1.0,1.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0)
+
+    dec[] Input:foward(dec array[]){
+        out.println("-----INPUT LAYER-----")
+
+        out.println("Input Data")
+        print_array(array)
+        dec expanded_array[] =  expand_array(array,MAX_NEURONS)
+        h1.foward(expanded_array,mask)
+        out.println("#")
         return null
+    }
+    dec[] expand_array (dec array[], int number_neurons){
+        dec expanded_array[] = new dec[MAX_NEURONS]
+        for (int i=0; i < array.arrayLength; i++){
+            expanded_array[i] = array[i]
+        }
+        return expanded_array
+    }
+    void print_array(dec array[]){
+        for (int i=0; i < array.arrayLength; i++){
+            out.print("$(decUtil.decToString(array[i])) ")
+        }
+        out.println(" ")
+    }
+    void print_matrix(dec matrix[], int max_neurons){
 
     }
+
 }
