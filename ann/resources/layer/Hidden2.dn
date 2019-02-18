@@ -1,3 +1,3 @@
 interface Hidden2 {
-  dec[] foward(dec array[], dec mask[])
+  dec[] foward(dec array[], dec mask[], dec y_array[])
 }

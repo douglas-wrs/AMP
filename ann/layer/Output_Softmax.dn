@@ -1,6 +1,6 @@
 const int MAX_NEURONS = 16
 
-component provides layer.Output requires io.Output out,
+component provides layer.Output requires io.Output out, display.Logger lg
 data.DecUtil decUtil, data.IntUtil intUtil, data.StringUtil strUtil, util.Math math {
 
     int num_neurons = 3
@@ -10,7 +10,7 @@ data.DecUtil decUtil, data.IntUtil intUtil, data.StringUtil strUtil, util.Math m
 
     transfer dec bias[] =  new dec[](1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0)
 
-    dec[] Output:foward(dec previous_array[], dec previous_mask[]){
+    dec[] Output:foward(dec previous_array[], dec previous_mask[], dec y_array[]){
         /* out.println("-----OUTPUT LAYER-----") */
         int previous_num_neurons = get_number_neurons(previous_mask)
 
@@ -46,6 +46,16 @@ data.DecUtil decUtil, data.IntUtil intUtil, data.StringUtil strUtil, util.Math m
         }
         /* print_array(activated_output) */
         /* out.println("#") */
+        dec cross_entropy_loss = 0.0
+
+        for (int i=0; i < activated_output.arrayLength; i++){
+                cross_entropy_loss += y_array[i]*math.log(activated_output[i]) + (1-y_array[i])*math.log(1-activated_output[i])
+        }
+        cross_entropy_loss = -1.0*cross_entropy_loss
+        out.println("$(decUtil.decToString(cross_entropy_loss))")
+
+        lg.plot_loss()
+
         return null
 
 

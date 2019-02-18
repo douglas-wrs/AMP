@@ -6,13 +6,13 @@ data.DecUtil decUtil, data.IntUtil intUtil, data.StringUtil strUtil {
     int num_neurons = 3
     dec mask[] = new dec[](1.0,1.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0)
 
-    dec[] Input:foward(dec array[]){
+    dec[] Input:foward(dec array[], dec y_array[]){
         /* out.println("-----INPUT LAYER-----") */
 
         /* out.println("Input Data") */
         /* print_array(array) */
         dec expanded_array[] =  expand_array(array,MAX_NEURONS)
-        h1.foward(expanded_array,mask)
+        h1.foward(expanded_array,mask,y_array)
         /* out.println("#") */
         return null
     }

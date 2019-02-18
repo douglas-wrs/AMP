@@ -10,7 +10,7 @@ data.DecUtil decUtil, data.IntUtil intUtil, data.StringUtil strUtil {
 
     transfer dec bias[] =  new dec[](1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0)
 
-    dec[] Hidden2:foward(dec previous_array[], dec previous_mask[]){
+    dec[] Hidden2:foward(dec previous_array[], dec previous_mask[], dec y_array[]){
         /* out.println("-----HIDDEN LAYER 2-----") */
         int previous_num_neurons = get_number_neurons(previous_mask)
 
@@ -39,7 +39,7 @@ data.DecUtil decUtil, data.IntUtil intUtil, data.StringUtil strUtil {
         dec output_bias[] = array_plus_array(output_weights,real_bias)
         /* print_array(output_bias) */
 
-        act2.activate(output_bias, mask)
+        act2.activate(output_bias, mask, y_array)
         /* out.println("#") */
         return null
     }
