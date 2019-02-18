@@ -22,8 +22,5 @@ The experiments are based on two datasets:
 Compile Project
 
 ```
-dnc .
-dnc . -sp "../repository;../Project"
-dana -sp ../Project InteractiveAssembly.o ../neuralnet/NeuralNetDemo1.o
-add_proxy |../pal/monitoring/proxies/NeuralNetProxy.o|*(*:OutputLayer[0]:*)|
+make
 ```
