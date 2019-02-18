@@ -19,8 +19,6 @@ The experiments are based on two datasets:
 
 # How to run
 
-Compile Project
-
 ```
 make
 ```
