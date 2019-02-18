@@ -1,13 +1,63 @@
+uses events.EventData
+
 component provides App requires io.Output out, layer.Input in,
-data.DecUtil decUtil, data.IntUtil intUtil, data.StringUtil strUtil{
+data.DecUtil decUtil, data.IntUtil intUtil, data.StringUtil strUtil,
+ui.Window, ui.Button, ui.Label, Font{
+    Window window
+    Label label_loss
+    Label display_loss
+    Label label_epoch
+    Label display_epoch
+    Thread main
+
+    eventsink AppEvents(EventData ed) {
+        if (ed.source === window && ed.type == Window.[close]) {
+			main.signal()
+		}
+	}
 
     dec data_row[] = new dec[](0.1, 0.2, 0.7)
 
     int App:main(AppParam param[]) {
-        out.println("")
-        out.println("Begin Epoch")
-        in.foward(data_row)
-        out.println("End of Epoch")
+        window = new Window("Learning Log")
+		window.setSize(400, 400)
+		window.setVisible(true)
+
+        label_epoch = new Label("Epoch: ", "LiberationMono.ttf", 18)
+		label_epoch.setColor(new Color(0, 0, 0, 255))
+        label_epoch.setPosition(70, 70)
+        window.addObject(label_epoch)
+
+        display_epoch = new Label("-", "LiberationMono.ttf", 18)
+		display_epoch.setColor(new Color(0, 0, 0, 255))
+        display_epoch.setPosition(140, 70)
+        window.addObject(display_epoch)
+
+        label_loss = new Label("Loss: ", "LiberationMono.ttf", 18)
+		label_loss.setColor(new Color(0, 0, 0, 255))
+        label_loss.setPosition(70, 140)
+        window.addObject(label_loss)
+
+        display_loss = new Label("-", "LiberationMono.ttf", 18)
+		display_loss.setColor(new Color(0, 0, 0, 255))
+        display_loss.setPosition(140, 140)
+        window.addObject(display_loss)
+
+        sinkevent AppEvents(window)
+        main = this.thread
+
+        int i = 0
+        while (true){
+            display_epoch.setText(decUtil.decToString(i))
+            in.foward(data_row)
+            display_loss.setText("0.9")
+            i++
+        }
+
+        this.thread.wait()
+
+		window.close()
+
         return 0
     }
 

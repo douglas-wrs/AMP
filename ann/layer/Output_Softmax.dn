@@ -11,41 +11,41 @@ data.DecUtil decUtil, data.IntUtil intUtil, data.StringUtil strUtil, util.Math m
     transfer dec bias[] =  new dec[](1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0)
 
     dec[] Output:foward(dec previous_array[], dec previous_mask[]){
-        out.println("-----OUTPUT LAYER-----")
+        /* out.println("-----OUTPUT LAYER-----") */
         int previous_num_neurons = get_number_neurons(previous_mask)
 
-        out.println("Input")
+        /* out.println("Input") */
         dec real_input[] = filter_array(previous_array,previous_mask,previous_num_neurons)
-        print_array(real_input)
+        /* print_array(real_input) */
 
         dec previous_mask_matrix[] = create_matrix_mask(previous_mask, MAX_NEURONS)
         dec previous_mask_matrix_t[] = transpose_matrix(previous_mask_matrix, MAX_NEURONS)
         dec mask_matrix[] = create_matrix_mask(mask, MAX_NEURONS)
         dec weights_mask[] = logical_and_array(previous_mask_matrix_t,mask_matrix, MAX_NEURONS)
 
-        out.println("Real weights matrix")
+        /* out.println("Real weights matrix") */
         dec real_weights[] = filter_matrix (weights, weights_mask, previous_num_neurons, num_neurons)
-        print_matrix(real_weights, previous_num_neurons, num_neurons)
+        /* print_matrix(real_weights, previous_num_neurons, num_neurons) */
 
-        out.println("Real bias")
+        /* out.println("Real bias") */
         dec real_bias[] = filter_array(bias,mask,num_neurons)
-        print_array(real_bias)
+        /* print_array(real_bias) */
 
-        out.println("Output neurons values")
+        /* out.println("Output neurons values") */
 
         dec output_weights[] = array_multi_matrix(real_input, real_weights, previous_num_neurons, num_neurons)
-        print_array(output_weights)
-        out.println("Output neurons values + bias")
+        /* print_array(output_weights) */
+        /* out.println("Output neurons values + bias") */
         dec output_bias[] = array_plus_array(output_weights,real_bias)
-        print_array(output_bias)
+        /* print_array(output_bias) */
 
-        out.println("Activation softmax")
+        /* out.println("Activation softmax") */
         dec activated_output[] = new dec[output_bias.arrayLength]
         for (int i=0; i < output_bias.arrayLength; i++){
                 activated_output[i] = math.natexp(output_bias[i]) / sum_natexp(output_bias)
         }
-        print_array(activated_output)
-        out.println("#")
+        /* print_array(activated_output) */
+        /* out.println("#") */
         return null
 
 

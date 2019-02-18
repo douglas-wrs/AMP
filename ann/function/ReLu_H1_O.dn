@@ -2,18 +2,18 @@ component provides function.Activation1 requires io.Output out, layer.Output op,
 data.DecUtil decUtil, data.IntUtil intUtil, data.StringUtil strUtil  {
 
     dec[] Activation1:activate(dec array[], dec mask[]){
-        out.println("-----ACTIVATION 1 (RELU)-----")
+        /* out.println("-----ACTIVATION 1 (RELU)-----") */
         dec activated_output[] = new dec[array.arrayLength]
         for (int i=0; i < array.arrayLength; i++){
             if (array[i] > 0.0)
                 activated_output[i] = array[i]
         }
-        out.println("Input")
-        print_array(array)
-        out.println("Activated output")
-        print_array(activated_output)
+        /* out.println("Input") */
+        /* print_array(array) */
+        /* out.println("Activated output") */
+        /* print_array(activated_output) */
         op.foward(activated_output, mask)
-        out.println("#")
+        /* out.println("#") */
         return null
 
     }
