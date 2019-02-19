@@ -1,20 +1,24 @@
 const int MAX_NEURONS = 16
 
+data Values{
+    dec loss
+}
+
 component provides layer.Input requires io.Output out, layer.Hidden1 h1,
 data.DecUtil decUtil, data.IntUtil intUtil, data.StringUtil strUtil {
 
     int num_neurons = 3
     dec mask[] = new dec[](1.0,1.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0)
 
-    dec[] Input:foward(dec array[], dec y_array[]){
+    Values Input:foward(dec array[], dec y_array[], dec alpha){
         /* out.println("-----INPUT LAYER-----") */
 
         /* out.println("Input Data") */
         /* print_array(array) */
         dec expanded_array[] =  expand_array(array,MAX_NEURONS)
-        h1.foward(expanded_array,mask,y_array)
+        Values output_values = h1.foward(expanded_array,mask,y_array, alpha)
         /* out.println("#") */
-        return null
+        return output_values
     }
     dec[] expand_array (dec array[], int number_neurons){
         dec expanded_array[] = new dec[MAX_NEURONS]

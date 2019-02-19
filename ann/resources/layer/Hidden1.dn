@@ -1,3 +1,6 @@
+data Values{
+    dec loss
+}
 interface Hidden1 {
-    dec[] foward(dec array[], dec mask[], dec y_array[])
+    Values foward(dec array[], dec mask[], dec y_array[], dec alpha)
 }

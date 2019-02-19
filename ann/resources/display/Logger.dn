@@ -1,4 +1,0 @@
-interface Logger {
-  dec[] plot_loss(dec loss)
-  dec[] plot_epoch(int epoch)
-}

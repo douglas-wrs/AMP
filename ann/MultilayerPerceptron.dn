@@ -1,5 +1,7 @@
 uses events.EventData
-
+data Values{
+    dec loss
+}
 component provides App requires io.Output out, layer.Input in,
 data.DecUtil decUtil, data.IntUtil intUtil, data.StringUtil strUtil,
 ui.Window, ui.Button, ui.Label, Font{
@@ -18,6 +20,7 @@ ui.Window, ui.Button, ui.Label, Font{
 
     dec data_row[] = new dec[](0.1, 0.2, 0.7)
     dec y_row[] = new dec[](1.0, 0.0, 0.0)
+    dec alpha = 0.01
 
     int App:main(AppParam param[]) {
         window = new Window("Learning Log")
@@ -50,13 +53,12 @@ ui.Window, ui.Button, ui.Label, Font{
         int i = 0
         while (true){
             display_epoch.setText(decUtil.decToString(i))
-            in.foward(data_row, y_row)
-            display_loss.setText("0.9")
+            Values output_values = in.foward(data_row, y_row, alpha)
+            display_loss.setText("$(decUtil.decToString(output_values.loss))")
             i++
         }
 
         this.thread.wait()
-
 		window.close()
 
         return 0

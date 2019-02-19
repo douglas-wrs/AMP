@@ -1,5 +1,8 @@
 const int MAX_NEURONS = 16
 
+data Values{
+    dec loss
+}
 component provides layer.Hidden1 requires io.Output out, function.Activation1 act1,
 data.DecUtil decUtil, data.IntUtil intUtil, data.StringUtil strUtil {
 
@@ -10,7 +13,7 @@ data.DecUtil decUtil, data.IntUtil intUtil, data.StringUtil strUtil {
 
     transfer dec bias[] =  new dec[](1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0)
 
-    dec[] Hidden1:foward(dec previous_array[], dec previous_mask[], dec y_array[]){
+    Values Hidden1:foward(dec previous_array[], dec previous_mask[], dec y_array[], dec alpha){
         /* out.println("-----HIDDEN LAYER 1-----") */
         int previous_num_neurons = get_number_neurons(previous_mask)
 
@@ -39,9 +42,9 @@ data.DecUtil decUtil, data.IntUtil intUtil, data.StringUtil strUtil {
         dec output_bias[] = array_plus_array(output_weights,real_bias)
         /* print_array(output_bias) */
 
-        act1.activate(output_bias, mask, y_array)
+        Values output_values = act1.activate(output_bias, mask, y_array, alpha)
         /* out.println("#") */
-        return null
+        return output_values
     }
     int get_number_neurons(dec array[]){
         int count = 0

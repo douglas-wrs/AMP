@@ -1,6 +1,10 @@
 const int MAX_NEURONS = 16
 
-component provides layer.Output requires io.Output out, display.Logger lg
+data Values{
+    dec loss
+}
+
+component provides layer.Output requires io.Output out,
 data.DecUtil decUtil, data.IntUtil intUtil, data.StringUtil strUtil, util.Math math {
 
     int num_neurons = 3
@@ -10,35 +14,29 @@ data.DecUtil decUtil, data.IntUtil intUtil, data.StringUtil strUtil, util.Math m
 
     transfer dec bias[] =  new dec[](1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0)
 
-    dec[] Output:foward(dec previous_array[], dec previous_mask[], dec y_array[]){
+    Values Output:foward(dec previous_array[], dec previous_mask[], dec y_array[], dec alpha){
+        /* FOWARDPROPAGATION */
         /* out.println("-----OUTPUT LAYER-----") */
         int previous_num_neurons = get_number_neurons(previous_mask)
-
         /* out.println("Input") */
         dec real_input[] = filter_array(previous_array,previous_mask,previous_num_neurons)
         /* print_array(real_input) */
-
-        dec previous_mask_matrix[] = create_matrix_mask(previous_mask, MAX_NEURONS)
-        dec previous_mask_matrix_t[] = transpose_matrix(previous_mask_matrix, MAX_NEURONS)
-        dec mask_matrix[] = create_matrix_mask(mask, MAX_NEURONS)
+        dec previous_mask_matrix[] = create_matrix_mask(previous_mask, MAX_NEURONS, MAX_NEURONS)
+        dec previous_mask_matrix_t[] = transpose_matrix(previous_mask_matrix, MAX_NEURONS, MAX_NEURONS)
+        dec mask_matrix[] = create_matrix_mask(mask, MAX_NEURONS, MAX_NEURONS)
         dec weights_mask[] = logical_and_array(previous_mask_matrix_t,mask_matrix, MAX_NEURONS)
-
         /* out.println("Real weights matrix") */
         dec real_weights[] = filter_matrix (weights, weights_mask, previous_num_neurons, num_neurons)
         /* print_matrix(real_weights, previous_num_neurons, num_neurons) */
-
         /* out.println("Real bias") */
         dec real_bias[] = filter_array(bias,mask,num_neurons)
         /* print_array(real_bias) */
-
         /* out.println("Output neurons values") */
-
         dec output_weights[] = array_multi_matrix(real_input, real_weights, previous_num_neurons, num_neurons)
         /* print_array(output_weights) */
         /* out.println("Output neurons values + bias") */
         dec output_bias[] = array_plus_array(output_weights,real_bias)
         /* print_array(output_bias) */
-
         /* out.println("Activation softmax") */
         dec activated_output[] = new dec[output_bias.arrayLength]
         for (int i=0; i < output_bias.arrayLength; i++){
@@ -47,16 +45,58 @@ data.DecUtil decUtil, data.IntUtil intUtil, data.StringUtil strUtil, util.Math m
         /* print_array(activated_output) */
         /* out.println("#") */
         dec cross_entropy_loss = 0.0
-
         for (int i=0; i < activated_output.arrayLength; i++){
-                cross_entropy_loss += y_array[i]*math.log(activated_output[i]) + (1-y_array[i])*math.log(1-activated_output[i])
+                cross_entropy_loss += y_array[i]*math.log(activated_output[i]) + (1.0-y_array[i])*math.log(1.0-activated_output[i])
         }
         cross_entropy_loss = -1.0*cross_entropy_loss
-        out.println("$(decUtil.decToString(cross_entropy_loss))")
+        Values return_data = new Values()
+        return_data.loss =  cross_entropy_loss
 
-        lg.plot_loss()
+        /* BACKPROPAGATION */
+        dec delta_cross_entropy[] = new dec[activated_output.arrayLength]
+        for (int i=0; i< delta_cross_entropy.arrayLength; i++){
+            delta_cross_entropy[i] = -1.0*(y_array[i]*(1.0/activated_output[i]) + (1.0 - y_array[i])* (1.0/(1.0-activated_output[i])))
+        }
+        dec delta_cross_entropy_m[] = create_matrix_mask(delta_cross_entropy, previous_num_neurons, num_neurons)
+        /* print_matrix(delta_cross_entropy_m, previous_num_neurons, num_neurons) */
 
-        return null
+        dec delta_softmax[] = new dec[output_bias.arrayLength]
+
+        dec aux_d_softmax = math.power(sum_natexp(output_bias), 2)
+        for (int i=0; i< delta_softmax.arrayLength; i++){
+            delta_softmax[i] = output_bias[i]*(sum_natexp(output_bias)-math.natexp(output_bias[i]))/aux_d_softmax
+        }
+        dec delta_softmax_m[] = create_matrix_mask(delta_softmax, previous_num_neurons, num_neurons)
+        /* print_matrix(delta_softmax_m, previous_num_neurons, num_neurons) */
+
+        dec delta_input[] = real_input
+        dec delta_input_m[] = new dec[previous_num_neurons*num_neurons]
+        for (int j=0; j < num_neurons; j++){
+            for (int i=0; i < previous_num_neurons; i++){
+                int index = i*num_neurons+j
+                delta_input_m[index] = real_input[i]
+            }
+        }
+
+        dec aux_delta_weights[] = matrix_point_mul(delta_cross_entropy_m, delta_softmax_m, previous_num_neurons, num_neurons)
+        dec delta_weights_m[] = matrix_point_mul(aux_delta_weights, delta_input_m, previous_num_neurons, num_neurons)
+        /* out.println(" ")
+        print_matrix(delta_cross_entropy_m, previous_num_neurons, num_neurons)
+        out.println(" ")
+        print_matrix(delta_softmax_m, previous_num_neurons, num_neurons)
+        out.println(" ")
+        print_matrix(delta_input_m, previous_num_neurons, num_neurons)
+        out.println(" ")
+        print_matrix(aux_delta_weights, previous_num_neurons, num_neurons)
+        out.println(" ")
+        print_matrix(delta_weights_m, previous_num_neurons, num_neurons) */
+
+        dec aux_new_weights[] = scalar_matrix_mul(alpha, delta_weights_m, previous_num_neurons, num_neurons)
+        dec new_weights[] = matrix_sub_mul(weights, aux_new_weights, previous_num_neurons, num_neurons)
+
+        weights = new_weights
+
+        return return_data
 
 
     }
@@ -83,9 +123,9 @@ data.DecUtil decUtil, data.IntUtil intUtil, data.StringUtil strUtil, util.Math m
             out.print("\n")
         }
     }
-    dec[] create_matrix_mask(dec array[], int num_columns){
-        dec mask_matrix[] = new dec[num_columns*num_columns]
-        for (int i=0; i < num_columns; i++){
+    dec[] create_matrix_mask(dec array[], int num_rows, int num_columns){
+        dec mask_matrix[] = new dec[num_rows*num_columns]
+        for (int i=0; i < num_rows; i++){
             for (int j=0; j < num_columns; j++){
                 int index = i*num_columns+j
                 mask_matrix[index] = array[j]
@@ -93,9 +133,9 @@ data.DecUtil decUtil, data.IntUtil intUtil, data.StringUtil strUtil, util.Math m
         }
         return mask_matrix
     }
-    dec[] transpose_matrix (dec matrix[], int num_columns){
-        dec transpose_matrix[] = new dec[num_columns*num_columns]
-        for (int c = 0; c < num_columns; c++) {
+    dec[] transpose_matrix (dec matrix[], int num_rows, int num_columns){
+        dec transpose_matrix[] = new dec[num_rows*num_columns]
+        for (int c = 0; c < num_rows; c++) {
             for (int d = 0; d < num_columns; d++){
                 int index = c*num_columns+d
                 int index_transpose = d*num_columns+c
@@ -151,6 +191,39 @@ data.DecUtil decUtil, data.IntUtil intUtil, data.StringUtil strUtil, util.Math m
         }
         return multiply
     }
+
+    dec[] matrix_point_mul(dec matrix_a[], dec matrix_b[], int number_rows, int number_columns){
+        dec multiply[] = new dec[number_rows*number_columns]
+        for (int c = 0; c < number_rows; c++) {
+            for (int d = 0; d < number_columns; d++) {
+                int index = c*number_columns+d
+                multiply[index] = matrix_a[index]*matrix_b[index]
+            }
+        }
+        return multiply
+    }
+    dec[] matrix_sub_mul(dec matrix_a[], dec matrix_b[], int number_rows, int number_columns){
+        dec sub[] = new dec[number_rows*number_columns]
+        for (int c = 0; c < number_rows; c++) {
+            for (int d = 0; d < number_columns; d++) {
+                int index = c*number_columns+d
+                sub[index] = matrix_a[index]-matrix_b[index]
+            }
+        }
+        return sub
+    }
+
+    dec[] scalar_matrix_mul(dec scalar, dec matrix_b[], int number_rows, int number_columns){
+        dec multiply[] = new dec[number_rows*number_columns]
+        for (int c = 0; c < number_rows; c++) {
+            for (int d = 0; d < number_columns; d++) {
+                int index = c*number_columns+d
+                multiply[index] = scalar*matrix_b[index]
+            }
+        }
+        return multiply
+    }
+
     dec[] array_plus_array(dec a_array[], dec b_array[]){
         dec sum_array[] = new dec[a_array.arrayLength]
 

@@ -1,7 +1,11 @@
+data Values{
+    dec loss
+}
+
 component provides function.Activation2 requires io.Output out, layer.Output op,
 data.DecUtil decUtil, data.IntUtil intUtil, data.StringUtil strUtil {
 
-    dec[] Activation2:activate(dec array[], dec mask[], dec y_array[]){
+    Values Activation2:activate(dec array[], dec mask[], dec y_array[], dec alpha){
         /* out.println("-----ACTIVATION 2 (RELU)-----") */
         dec activated_output[] = new dec[array.arrayLength]
         for (int i=0; i < array.arrayLength; i++){
@@ -12,9 +16,9 @@ data.DecUtil decUtil, data.IntUtil intUtil, data.StringUtil strUtil {
         /* print_array(array) */
         /* out.println("Activated output") */
         /* print_array(activated_output) */
-        op.foward(activated_output, mask, y_array)
+        Values output_values = op.foward(activated_output, mask, y_array, alpha)
         /* out.println("#") */
-        return null
+        return output_values
 
     }
     void print_array(dec array[]){
