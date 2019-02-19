@@ -15,7 +15,7 @@ The experiments are based on two datasets:
 
 # Architecture
 
-![EMLP Architecture](./adaptive_mlp.png)
+![EMLP Architecture](./simple_adaptive_mlp.png)
 
 # How to run
 
