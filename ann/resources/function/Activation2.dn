@@ -1,6 +1,7 @@
-data Values{
+data ValuesActivation{
     dec loss
+    dec delta_activation[]
 }
 interface Activation2 {
-  Values activate(dec array[], dec mask[], dec y_array[], dec alpha)
+  ValuesActivation activate(dec array[], dec mask[], dec y_array[], dec alpha)
 }

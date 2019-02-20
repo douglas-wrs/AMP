@@ -1,4 +1,8 @@
 const int MAX_NEURONS = 16
+data ValuesActivation{
+    dec loss
+    dec delta_activation[]
+}
 data Values{
     dec loss
 }
@@ -13,36 +17,30 @@ data.DecUtil decUtil, data.IntUtil intUtil, data.StringUtil strUtil {
     transfer dec bias[] =  new dec[](1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0)
 
     Values Hidden2:foward(dec previous_array[], dec previous_mask[], dec y_array[], dec alpha){
-        /* out.println("-----HIDDEN LAYER 2-----") */
+        /* FOWARDPROPAGATION */
+        /*  Get the number of neurons of previous layer*/
         int previous_num_neurons = get_number_neurons(previous_mask)
-
-        /* out.println("Input") */
+        /* Filter real input dimensions */
         dec real_input[] = filter_array(previous_array,previous_mask,previous_num_neurons)
-        /* print_array(real_input) */
-
+        /* Construct logical mask for filtering dimensions */
         dec previous_mask_matrix[] = create_matrix_mask(previous_mask, MAX_NEURONS)
         dec previous_mask_matrix_t[] = transpose_matrix(previous_mask_matrix, MAX_NEURONS)
         dec mask_matrix[] = create_matrix_mask(mask, MAX_NEURONS)
         dec weights_mask[] = logical_and_array(previous_mask_matrix_t,mask_matrix, MAX_NEURONS)
-
-        /* out.println("Real weights matrix") */
+        /* Filter real dimensions of weigths and bias */
         dec real_weights[] = filter_matrix (weights, weights_mask, previous_num_neurons, num_neurons)
-        /* print_matrix(real_weights, previous_num_neurons, num_neurons) */
-
-        /* out.println("Real bias") */
         dec real_bias[] = filter_array(bias,mask,num_neurons)
-        /* print_array(real_bias) */
-
-        /* out.println("Output neurons values") */
-
+        /*  Input x Weights */
         dec output_weights[] = array_multi_matrix(real_input, real_weights, previous_num_neurons, num_neurons)
-        /* print_array(output_weights) */
-        /* out.println("Output neurons values + bias") */
+        /*  Output + bias*/
         dec output_bias[] = array_plus_array(output_weights,real_bias)
-        /* print_array(output_bias) */
+        /*  Call activation function*/
+        ValuesActivation delta_activation = act2.activate(output_bias, mask, y_array, alpha)
+        /* BACKPROPAGATION */
+        print_array(delta_activation.delta_activation)
+        Values output_values = new Values()
+        output_values.loss = delta_activation.loss
 
-        Values output_values = act2.activate(output_bias, mask, y_array, alpha)
-        /* out.println("#") */
         return output_values
     }
     int get_number_neurons(dec array[]){

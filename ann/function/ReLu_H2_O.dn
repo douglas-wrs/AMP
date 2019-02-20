@@ -1,24 +1,34 @@
 data Values{
     dec loss
 }
-
+data ValuesActivation{
+    dec loss
+    dec delta_activation[]
+}
 component provides function.Activation2 requires io.Output out, layer.Output op,
 data.DecUtil decUtil, data.IntUtil intUtil, data.StringUtil strUtil {
 
-    Values Activation2:activate(dec array[], dec mask[], dec y_array[], dec alpha){
-        /* out.println("-----ACTIVATION 2 (RELU)-----") */
+    ValuesActivation Activation2:activate(dec array[], dec mask[], dec y_array[], dec alpha){
+        /* FOWARDPROPAGATION */
+        /*  Apply the activation function on the inputed data*/
         dec activated_output[] = new dec[array.arrayLength]
         for (int i=0; i < array.arrayLength; i++){
             if (array[i] > 0.0)
                 activated_output[i] = array[i]
         }
-        /* out.println("Input") */
-        /* print_array(array) */
-        /* out.println("Activated output") */
-        /* print_array(activated_output) */
+        /*  Pass the activated values into the output layer*/
         Values output_values = op.foward(activated_output, mask, y_array, alpha)
-        /* out.println("#") */
-        return output_values
+        /* BACKPROPAGATION */
+        /*  Derivation of sigmoid activation function with output layer input*/
+        dec delta_relu[] = new dec[array.arrayLength]
+        for (int i=0; i< delta_relu.arrayLength; i++){
+            delta_relu[i] = 1
+        }
+        ValuesActivation activation_values = new ValuesActivation()
+        activation_values.loss = output_values.loss
+        activation_values.delta_activation = delta_relu
+
+        return activation_values
 
     }
     void print_array(dec array[]){
