@@ -37,10 +37,18 @@ data.DecUtil decUtil, data.IntUtil intUtil, data.StringUtil strUtil {
         /*  Call activation function*/
         ValuesActivation delta_activation = act2.activate(output_bias, mask, y_array, alpha)
         /* BACKPROPAGATION */
-        print_array(delta_activation.delta_activation)
+        /* print_array(delta_activation.delta_activation) */
         Values output_values = new Values()
         output_values.loss = delta_activation.loss
-
+        /*  Derivation of layer 2 weigths*/
+        dec delta_input[] = real_input
+        dec delta_input_m[] = new dec[previous_num_neurons*num_neurons]
+        for (int j=0; j < num_neurons; j++){
+            for (int i=0; i < previous_num_neurons; i++){
+                int index = i*num_neurons+j
+                delta_input_m[index] = real_input[i]
+            }
+        }
         return output_values
     }
     int get_number_neurons(dec array[]){
